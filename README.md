@@ -22,8 +22,8 @@
 
 **각 ToDo 항목은 완료 버튼과 삭제 버튼이 있으며, 완료된 항목은 Working 목록에서 Done 목록으로 이동할 수 있습니다.**
 
-**useNavigate를 사용하여 상세보기를 눌렀을 때 detail 페이지로 이동하게 만들었습니다. 또한 useParams를 사용하여 상세보기를 눌렀을 때 id, title, body를 받아오게 했습니다.
-**
+**useNavigate를 사용하여 상세보기를 눌렀을 때 detail 페이지로 이동하게 만들었습니다. 또한 useParams를 사용하여 상세보기를 눌렀을 때 id, title, body를 받아오게 했습니다.**
+
 **컴포넌트 분리 전 원본 코드**
 
 ```jsx
