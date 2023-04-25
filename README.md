@@ -14,15 +14,15 @@
 
 ## 📝 기능 
 
-**이 코드는 React와 Redux를 사용하여 만든 ToDo List 애플리케이션입니다.**
+**이 코드는 `React`와 `Redux`를 사용하여 만든 ToDo List 애플리케이션입니다.**
 
-**styled-components를 사용하여 스타일링을 하고, useSelector와 useDispatch 훅을 사용하여 Redux의 상태를 가져오고 액션을 발생시켜 상태를 변경합니다.**
+**`styled-components`를 사용하여 스타일링을 하고, `useSelector`와 `useDispatch` 훅을 사용하여 Redux의 상태를 가져오고 액션을 발생시켜 상태를 변경합니다.**
 
 **이 애플리케이션은 입력된 제목과 내용을 가지고 ToDo 항목을 추가하고, 추가된 항목은 목록에 보여집니다.**
 
 **각 ToDo 항목은 완료 버튼과 삭제 버튼이 있으며, 완료된 항목은 Working 목록에서 Done 목록으로 이동할 수 있습니다.**
 
-**useNavigate를 사용하여 상세보기를 눌렀을 때 detail 페이지로 이동하게 만들었습니다. 또한 useParams를 사용하여 상세보기를 눌렀을 때 id, title, body를 받아오게 했습니다.**
+**`useNavigate`를 사용하여 상세보기를 눌렀을 때 detail 페이지로 이동하게 만들었습니다. 또한 `useParams`를 사용하여 상세보기를 눌렀을 때 id, title, body를 받아오게 했습니다.**
 
 **컴포넌트 분리 전 원본 코드**
 
