@@ -1,70 +1,286 @@
-# Getting Started with Create React App
+# 💻 프로젝트 Description
+### 프로젝트 명 : TodoList
+> React 훅 useState와 props, jsx를 이용해서 간단히 만든 todolist에 redux를 사용하여 다시 만드는 todolist입니다. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## ✅ 배포
 
-In the project directory, you can run:
+❌
 
-### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+----
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `yarn test`
+## 📝 기능 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**이 코드는 React와 Redux를 사용하여 만든 ToDo List 애플리케이션입니다.**
 
-### `yarn build`
+**styled-components를 사용하여 스타일링을 하고, useSelector와 useDispatch 훅을 사용하여 Redux의 상태를 가져오고 액션을 발생시켜 상태를 변경합니다.**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**이 애플리케이션은 입력된 제목과 내용을 가지고 ToDo 항목을 추가하고, 추가된 항목은 목록에 보여집니다.**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**각 ToDo 항목은 완료 버튼과 삭제 버튼이 있으며, 완료된 항목은 Working 목록에서 Done 목록으로 이동할 수 있습니다.**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**useNavigate를 사용하여 상세보기를 눌렀을 때 detail 페이지로 이동하게 만들었습니다. 또한 useParams를 사용하여 상세보기를 눌렀을 때 id, title, body를 받아오게 했습니다.
+**
+**컴포넌트 분리 전 원본 코드**
 
-### `yarn eject`
+```jsx
+import React from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { adduser } from "./redux/modules/users";
+import { deleteuser } from "./redux/modules/users";
+import { completeuser } from "./redux/modules/users";
+import { canceluser } from "./redux/modules/users";
+import { useNavigate } from "react-router-dom";
+// import Router from "./shared/Router";
+import { setbody } from "./redux/modules/body";
+import { settitle } from "./redux/modules/title";
+// import { resettitle } from "./redux/modules/title";
+// import { resetbody } from "./redux/modules/body";
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+const StBtn = styled.button`
+  // 버튼
+  // 그리고 이 안에 스타일 코드를 작성합니다. 스타일 코드는 우리가 알고 있는 css와 동일합니다.
+  border: none;
+  border-radius: 12px;
+  color: #ece1d6;
+  font-weight: 700;
+  height: 40px;
+  color: #99201c;
+  width: 140px;
+`;
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const Sthead = styled.header`
+  // 헤드
+  background: linear-gradient(#99201c, #f56545);
+  align-items: center;
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 20px;
+  color: white;
+`;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+const StInputList = styled.div`
+  // Input div
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  background: linear-gradient(#f56545, #99201c);
+  font-size: 20px;
+  color: white;
+`;
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+const StInput = styled.input`
+  // input
+  border: none;
+  border-radius: 12px;
+  height: 40px;
+  padding: 0 12px;
+  width: 240px;
+`;
 
-## Learn More
+const StLayout = styled.div`
+  // 전체 설정
+  margin: 0 auto;
+  max-width: 1200px;
+  min-width: 800px;
+`;
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const StList = styled.div`
+  // list 간격 설정
+  padding: 0 24px;
+`;
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const StListBox = styled.div`
+  // 박스 설정
+  border: 4px solid black;
+  border-radius: 12px;
+  padding: 12px 24px 24px;
+  width: 270px;
+  background: linear-gradient(#f56545, #99201c);
+`;
 
-### Code Splitting
+const StListBtnList = styled.div`
+  // 리스트 버튼 간격
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+`;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const StListBtn = styled.button`
+  // 리스트 버튼
+  border-radius: 8px;
+  cursor: pointer;
+  height: 40px;
+  width: 50%;
+  background-color: white;
+  border: 2px solid #99201c;
+`;
 
-### Analyzing the Bundle Size
+const StWrapper = styled.div`
+  // 리스트 안에 배치 설정
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+`;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+function App() {
+  // body의 state
+  const user = useSelector((store) => store.reducer_user);
+  const title = useSelector((store) => store.reducer_title);
+  const body = useSelector((store) => store.reducer_body);
+  const nevigate = useNavigate();
+  const dispatch = useDispatch(); // 액션을 받아오기위해서
 
-### Making a Progressive Web App
+  const titlechange = (e) => {
+    dispatch(settitle(e));
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+  const bodychange = (e) => {
+    dispatch(setbody(e));
+  };
 
-### Advanced Configuration
+  const addbtn = (e) => {
+    // 추가 버튼
+    dispatch(adduser(title, body));
+    dispatch(setbody(e)); // 초기화
+    dispatch(settitle(e)); // 초기화
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  const deletebtn = (id) => {
+    // 삭제 버튼 id를 받아 id가 같지 않다며 제외한 배열 생성
+    dispatch(deleteuser(id));
+  };
 
-### Deployment
+  const completebtn = (id) => {
+    // 완료 버튼 id를 받아서 해당 id의 user의 isDone을 true로 변경
+    dispatch(completeuser(id));
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  const cancelbtn = (id) => {
+    //  삭제 버튼 id를 받아서 id를 false로 변경
+    dispatch(canceluser(id));
+  };
 
-### `yarn build` fails to minify
+  return (
+    <div>
+      <StLayout>
+        <Sthead>
+          <div>My Todo List</div>
+          <div>React</div>
+        </Sthead>
+        <StInputList>
+          제목
+          <StInput type="text" value={title} onChange={titlechange} />
+          내용
+          <StInput type="text" value={body} onChange={bodychange} />
+          <StBtn onClick={addbtn}>추가하기</StBtn>
+        </StInputList>
+        <StList>
+          <h2>Working.. 🔥</h2>
+          <StWrapper>
+            {user
+              .filter((user) => user.isDone === false)
+              .map((user) => {
+                return (
+                  <StListBox key={user.id}>
+                    <p
+                      onClick={() => {
+                        nevigate(`/detail/${user.id}`);
+                      }}
+                    >
+                      상세보기
+                    </p>
+                    <h2>{user.title}</h2>
+                    {user.body}
+                    <StListBtnList>
+                      <StListBtn onClick={() => deletebtn(user.id)}>
+                        삭제하기
+                      </StListBtn>
+                      <StListBtn onClick={() => completebtn(user.id)}>
+                        {user.isDone ? "취소하기" : "완료하기"}
+                      </StListBtn>
+                    </StListBtnList>
+                  </StListBox>
+                );
+              })}
+          </StWrapper>
+          <div>
+            <h2>Done..!🎉</h2>
+            <StWrapper>
+              {user
+                .filter((user) => user.isDone === true)
+                .map((user) => {
+                  return (
+                    <StListBox key={user.id}>
+                      <p
+                        onClick={() => {
+                          nevigate(`/detail/${user.id}`);
+                        }}
+                      >
+                        상세보기
+                      </p>
+                      <h2>{user.title}</h2>
+                      {user.body}
+                      <StListBtnList>
+                        <StListBtn onClick={() => deletebtn(user.id)}>
+                          삭제하기
+                        </StListBtn>
+                        <StListBtn onClick={() => cancelbtn(user.id)}>
+                          {user.isDone ? "취소하기" : "완료하기"}
+                        </StListBtn>
+                      </StListBtnList>
+                    </StListBox>
+                  );
+                })}
+            </StWrapper>
+          </div>
+        </StList>
+      </StLayout>
+    </div>
+  );
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default App;
+```
+
+
+---
+
+## ✍️ 업데이트 내역
+
+------
+
+
+## 🔡 개발 환경 및 설치 방법
+
+
+**Mac**
+
+```sh
+$ npm install -g yarn
+yarn create-react-app my-app
+cd my-app
+yarn start
+```
+
+**Window**
+
+```sh
+$ npm install -g yarn
+yarn create-react-app my-app
+cd my-app
+yarn start
+```
+----
